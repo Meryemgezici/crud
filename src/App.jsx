@@ -3,7 +3,7 @@ import { v4 } from 'uuid';
 import BookCard from "./components/BookCard.jsx";
 import HandleDelete from "./components/HandleDelete.jsx";
 import HandleEdit from "./components/HandleEdit.jsx";
-
+import { toast } from 'react-toastify';
 
 function App() {
   // book useState
@@ -16,19 +16,19 @@ function App() {
   const [showEditModal, setShowEditModal] = useState(false);
 
   const handleChange = (e) => {
-    e.preventDefault();
-    if (!e.target.value) {
-      setInputError("Lütfen bir kitap ismi giriniz");
-      return;
-    }
-    setInputError(false);
+    // e.preventDefault();
     setBookName(e.target.value);
-    console.log(bookName);
+
   }
 
   // book objesi oluştur ve books statein ekle
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!bookName) {
+      toast.warn('Lütfen Kitap İsmi Giriniz', { autoClose: 2000 });
+      return;
+    }
 
     const book = {
       id: v4(),
@@ -38,6 +38,11 @@ function App() {
     }
 
     setBooks([...books, book]);
+
+      // bildirim ver
+      toast.success('Kitap Başarıyla Eklendi', {
+        autoClose: 2000,
+      });
 
   }
 
@@ -83,10 +88,19 @@ function App() {
 
   const handleDelete = () => {
 
+    // silinecek olan kitap hariç diğer kitapları dizi aktar
     const cloneBooks = books.filter((item) => item.id !== deleteId);
 
+    // state güncelle
     setBooks(cloneBooks);
+
+    // Modalı kapat
     deleteShowModal();
+
+    // bildirim ver
+    toast.error('Kitap Başarıyla Silindi', {
+      autoClose: 2000,
+    });
   };
 
   const handleEdit = (editBook) => {
@@ -95,6 +109,11 @@ function App() {
     cloneBooks[bookIndex] =editBook;
     setBooks(cloneBooks);
     setShowEditModal(false);
+
+     // bildirim ver
+     toast.info('Kitap Güncellendi', {
+      autoClose: 2000,
+    });
   };
   return (
     <div>
