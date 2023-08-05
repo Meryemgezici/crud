@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { v4 } from 'uuid';
+import BookCard from "./components/BookCard.jsx";
+
 function App() {
   // book useState
   const [bookName, setBookName] = useState("");
-  const [inputError,setInputError]=useState(false);
+  const [inputError, setInputError] = useState(false);
+  const [books, setBooks] = useState([]);
+
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -14,6 +19,44 @@ function App() {
     setBookName(e.target.value);
     console.log(bookName);
   }
+
+  // book objesi oluştur ve books statein ekle
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const book = {
+      id: v4(),
+      title: bookName,
+      date: new Date().toLocaleString(),
+      isRead: false,
+    }
+
+    setBooks([...books, book]);
+    console.log(books);
+  }
+
+  // Kitabın okundu okunmadı bilgisi
+  const handleRead=(book)=>{
+    
+    // okundu bilgisini tersine çevirme
+    const updateBook={...book,isRead:!book.isRead};
+
+    const bookIndex=books.findIndex((item)=>item.id===book.id);
+
+    // state'de direkt olarak değiştiremeyeceğimiz için önce kopyasını oluşturuyoruz.
+    const cloneBooks=[...books];
+
+    // Bu clonladığımız diziyi artık değiştirebiliriz çünkü state değil
+    cloneBooks[bookIndex]=updateBook;
+
+    // daha sonra bu değişikliği state atarak sayfanın o kısmını güncelleriz.
+    setBooks(cloneBooks);
+
+
+    
+    
+  }
+
   return (
     <div>
       {/* Header */}
@@ -25,11 +68,29 @@ function App() {
       <div className="container">
         {/* Alert */}
         {inputError && <div className="alert alert-danger mt-5">{inputError}</div>}
-        
-        <form className="d-flex gap-3 mt-4">
+
+        <form className="d-flex gap-3 mt-4" onSubmit={handleSubmit}>
           <input onChange={handleChange} placeholder="Bir kitap ismi giriniz..." className="form-control shadow" type="search" />
           <button className="btn btn-warning shadow">Ekle</button>
         </form>
+        {/* eğer books dizisinde eleman yoksa */}
+        {
+          books.length === 0 &&
+          (
+            <h4 className="mt-4">Henüz herhangi bir kitap eklenmedi</h4>
+          )
+        }
+
+        {/* eğer books dizisinde eleman varsa */}
+        {
+          books.map((book) => 
+            (
+              <BookCard key={book.id} book={book} handleRead={handleRead} />
+              
+            )
+
+          )
+        }
 
       </div>
 
