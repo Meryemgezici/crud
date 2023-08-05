@@ -2,6 +2,7 @@ import { useState } from "react";
 import { v4 } from 'uuid';
 import BookCard from "./components/BookCard.jsx";
 import HandleDelete from "./components/HandleDelete.jsx";
+import HandleEdit from "./components/HandleEdit.jsx";
 
 
 function App() {
@@ -11,6 +12,8 @@ function App() {
   const [books, setBooks] = useState([]);
   const [deleteId, setDeleteId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -20,7 +23,7 @@ function App() {
     }
     setInputError(false);
     setBookName(e.target.value);
-
+    console.log(bookName);
   }
 
   // book objesi oluştur ve books statein ekle
@@ -63,6 +66,11 @@ function App() {
     setShowDeleteModal(true);
   };
 
+  const editModel=(book)=>{
+    setEditItem(book);
+    setShowEditModal(true);
+  }
+
   const deleteShowModal=()=>{
     if(showDeleteModal===true){
       setShowDeleteModal(false);
@@ -81,6 +89,13 @@ function App() {
     deleteShowModal();
   };
 
+  const handleEdit = (editBook) => {
+    const cloneBooks = [...books];
+    const bookIndex = books.findIndex((item) => item.id === editBook.id);
+    cloneBooks[bookIndex] =editBook;
+    setBooks(cloneBooks);
+    setShowEditModal(false);
+  };
   return (
     <div>
       {/* Header */}
@@ -109,7 +124,7 @@ function App() {
         {
           books.map((book) =>
           (
-            <BookCard key={book.id} book={book} handleRead={handleRead} handleModal={handleModal} />
+            <BookCard key={book.id} book={book} handleRead={handleRead} handleModal={handleModal} editModal={editModel} />
 
           )
 
@@ -120,6 +135,9 @@ function App() {
 
       {/* Delete Modal */}
       {showDeleteModal && <HandleDelete deleteShowModal={deleteShowModal} handleDelete={handleDelete} />}
+
+      {/* Edit Modal */}
+      {showEditModal && <HandleEdit editItem={editItem} setEditItem={setEditItem} setShowEditModal={setShowEditModal}  handleEdit={handleEdit}/>}
     </div>
   )
 }

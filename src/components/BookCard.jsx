@@ -1,6 +1,6 @@
 import React from 'react'
 
-const BookCard = ({ book, handleRead, handleModal }) => {
+const BookCard = ({ book, handleRead, handleModal,editModal }) => {
     // console.log(book.title);
 
     return (
@@ -15,7 +15,7 @@ const BookCard = ({ book, handleRead, handleModal }) => {
             </div>
             <div className="btn-group">
                 <button className="btn btn-danger" onClick={() => handleModal(book.id)}> Sil</button>
-                <button className="btn btn-primary"> Düzenle </button>
+                <button className="btn btn-primary" onClick={() => editModal(book)}> Düzenle </button>
                 <button className="btn btn-success" onClick={() => handleRead(book)}>{book.isRead ? "okundu" : "okunmadı"} </button>
             </div>
         </div>
