@@ -1,13 +1,16 @@
 import { useState } from "react";
 import { v4 } from 'uuid';
 import BookCard from "./components/BookCard.jsx";
+import HandleDelete from "./components/HandleDelete.jsx";
+
 
 function App() {
   // book useState
   const [bookName, setBookName] = useState("");
   const [inputError, setInputError] = useState(false);
   const [books, setBooks] = useState([]);
-
+  const [deleteId, setDeleteId] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const handleChange = (e) => {
     e.preventDefault();
@@ -17,7 +20,7 @@ function App() {
     }
     setInputError(false);
     setBookName(e.target.value);
-    console.log(bookName);
+
   }
 
   // book objesi oluştur ve books statein ekle
@@ -32,30 +35,51 @@ function App() {
     }
 
     setBooks([...books, book]);
-    console.log(books);
+
   }
 
   // Kitabın okundu okunmadı bilgisi
-  const handleRead=(book)=>{
-    
-    // okundu bilgisini tersine çevirme
-    const updateBook={...book,isRead:!book.isRead};
+  const handleRead = (book) => {
 
-    const bookIndex=books.findIndex((item)=>item.id===book.id);
+    // okundu bilgisini tersine çevirme
+    const updateBook = { ...book, isRead: !book.isRead };
+
+    const bookIndex = books.findIndex((item) => item.id === book.id);
 
     // state'de direkt olarak değiştiremeyeceğimiz için önce kopyasını oluşturuyoruz.
-    const cloneBooks=[...books];
+    const cloneBooks = [...books];
 
     // Bu clonladığımız diziyi artık değiştirebiliriz çünkü state değil
-    cloneBooks[bookIndex]=updateBook;
+    cloneBooks[bookIndex] = updateBook;
 
     // daha sonra bu değişikliği state atarak sayfanın o kısmını güncelleriz.
     setBooks(cloneBooks);
 
-
-    
-    
   }
+
+  const handleModal = (id) => {
+    setDeleteId(id);
+
+    setShowDeleteModal(true);
+  };
+
+  const deleteShowModal=()=>{
+    if(showDeleteModal===true){
+      setShowDeleteModal(false);
+      return;
+    }
+    setShowDeleteModal(true);
+
+  }
+
+
+  const handleDelete = () => {
+
+    const cloneBooks = books.filter((item) => item.id !== deleteId);
+
+    setBooks(cloneBooks);
+    deleteShowModal();
+  };
 
   return (
     <div>
@@ -83,17 +107,19 @@ function App() {
 
         {/* eğer books dizisinde eleman varsa */}
         {
-          books.map((book) => 
-            (
-              <BookCard key={book.id} book={book} handleRead={handleRead} />
-              
-            )
+          books.map((book) =>
+          (
+            <BookCard key={book.id} book={book} handleRead={handleRead} handleModal={handleModal} />
+
+          )
 
           )
         }
 
       </div>
 
+      {/* Delete Modal */}
+      {showDeleteModal && <HandleDelete deleteShowModal={deleteShowModal} handleDelete={handleDelete} />}
     </div>
   )
 }
