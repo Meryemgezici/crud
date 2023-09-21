@@ -17,4 +17,4 @@ CRUD (Create, Read, Update, Delete) uygulaması, kitap verilerini yönetmenizi s
 
 <h3>Ekran Görüntüsü</h3>
 
-<!-- ![](project.gif) -->
+![](project.gif)
